@@ -2,9 +2,10 @@ Analysis of my Goodreads data
 ================
 
 Some exploratory analyses and data visualization of my Goodreads data,
-with additional information scraped from Wikidata and Open Library. A
-prediction model is built to predict my ratings of books based on their
-characteristics.
+with additional information scraped from Wikidata and Open Library. I
+build a co-occurrence network of the tags associated with books in Open
+Library, and a prediction model to predict my ratings of books based on
+their characteristics.
 
 ## Data preprocessing
 
@@ -280,7 +281,7 @@ ggplot(bookstrain %>% filter(!is.na(Date.Read)),
   annotate("rect", xmin = as.Date("2022-01-01"), xmax = as.Date("2022-09-22"), ymin = -Inf, ymax = Inf, fill = "lightsteelblue4", alpha = 0.15)
 ```
 
-<img src="myGoodReads_Analysis_files/figure-gfm/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
 
 I read more books in Autumn and Winter.
 
@@ -292,7 +293,7 @@ ggplot(bookstrain %>% filter(!is.na(Season.Read)), aes(x = Season.Read, fill = S
   theme(legend.title = element_blank())
 ```
 
-<img src="myGoodReads_Analysis_files/figure-gfm/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
 
 ### Book characteristics
 
@@ -321,7 +322,7 @@ ggplot(bookstrain %>%
   labs(title = "Books read by number of pages", x = "Pages", y = "Number of books")
 ```
 
-<img src="myGoodReads_Analysis_files/figure-gfm/unnamed-chunk-17-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-17-1.png" style="display: block; margin: auto;" />
 
 ``` r
 ggplot(bookstrain %>% filter(!is.na(Number.of.Pages) & Number.of.Pages < 2000),
@@ -332,7 +333,7 @@ ggplot(bookstrain %>% filter(!is.na(Number.of.Pages) & Number.of.Pages < 2000),
   labs(title = "Ratings by number of pages", x = "Number of pages", y = "Rating")
 ```
 
-<img src="myGoodReads_Analysis_files/figure-gfm/unnamed-chunk-18-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-18-1.png" style="display: block; margin: auto;" />
 
 I read many books published in the last 20 years, but also a good number
 of classics from the 19th and early 20th century. There is no clear
@@ -348,7 +349,7 @@ ggplot(bookstrain %>% filter(!is.na(Original.Publication.Year) & Original.Public
   labs(title = "Books read by publication year", x = "Year", y = "Number of books")
 ```
 
-<img src="myGoodReads_Analysis_files/figure-gfm/unnamed-chunk-20-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-20-1.png" style="display: block; margin: auto;" />
 
 ``` r
 ggplot(bookstrain %>% filter(!is.na(Original.Publication.Year) & Original.Publication.Year > 1830), aes(x = Original.Publication.Year, y = My.Rating)) +
@@ -358,7 +359,7 @@ ggplot(bookstrain %>% filter(!is.na(Original.Publication.Year) & Original.Public
   labs(title = "Ratings by publication year", x = "Year", y = "Rating")
 ```
 
-<img src="myGoodReads_Analysis_files/figure-gfm/unnamed-chunk-20-2.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-20-2.png" style="display: block; margin: auto;" />
 
 ### Author characteristics
 
@@ -379,7 +380,7 @@ ggplot(world_counts) +
   theme(legend.title = element_blank())
 ```
 
-<img src="myGoodReads_Analysis_files/figure-gfm/unnamed-chunk-21-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-21-1.png" style="display: block; margin: auto;" />
 
 In the time period considered, I read 134 books with known author
 gender, of which 73 (54.5%) were written by male authors and 61 (45.5%)
@@ -410,7 +411,7 @@ ggplot(gender_props, aes(fill=gender, y=prop, x=group)) +
   scale_fill_manual(values = c("#A1A5EC", "#ED90A4"))
 ```
 
-<img src="myGoodReads_Analysis_files/figure-gfm/unnamed-chunk-23-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-23-1.png" style="display: block; margin: auto;" />
 
 ``` r
 ratings_gender <- bookstrain %>% filter(!is.na(AuthorGender) & !is.na(My.Rating)) %>%
@@ -440,7 +441,7 @@ ggplot(ratings_gender, aes(x = count2, y = My.Rating, fill = AuthorGender)) +
   theme(legend.title = element_blank())
 ```
 
-<img src="myGoodReads_Analysis_files/figure-gfm/unnamed-chunk-23-2.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-23-2.png" style="display: block; margin: auto;" />
 
 There is a moderate positive correlation between my ratings and the
 average ratings by other readers (correlation coefficient = 0.291), but
@@ -459,7 +460,7 @@ ggplot(bookstrain %>% filter(!is.na(My.Rating) & !is.na(Average.Rating)),
   labs(title = "My ratings vs. average ratings", x = "Average rating", y = "My rating")
 ```
 
-<img src="myGoodReads_Analysis_files/figure-gfm/unnamed-chunk-24-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-24-1.png" style="display: block; margin: auto;" />
 
 ### Book tags/subjects
 
@@ -566,7 +567,7 @@ ggplot(tags_train, aes(x = reorder(SubjectList, Count), y = Count)) +
         plot.title = element_text(hjust = 0, size = 20, face = "bold.italic"))
 ```
 
-<img src="myGoodReads_Analysis_files/figure-gfm/unnamed-chunk-26-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-26-1.png" style="display: block; margin: auto;" />
 
 We can also look at how tags co-occur in books, to see which topics are
 often read together, with a co-occurrence network:
@@ -588,14 +589,14 @@ ggraph(tags_graph, layout = "kk") +
   geom_edge_link(aes(alpha = rescale(weight)), width = 1, color = "gray70", show.legend = TRUE) +
   scale_edge_width(range = c(0.2, 2)) +
   geom_node_point(aes(size = rescale(degree)), color = "lightsteelblue3", show.legend = FALSE) +
-  geom_node_text(aes(label = str_wrap(name, width = 10)), size = 5, max.overlaps = 10, repel = TRUE, family = "sans") +
+  geom_node_text(aes(label = str_wrap(name, width = 10)), size = 4, max.overlaps = 10, repel = TRUE, family = "sans") +
   theme_void() + 
   labs(title = "Tag Co-Occurrence Network") +
   theme(legend.position = "none",
         plot.title = element_text(hjust = 0.5, size = 20, face = "bold.italic"))
 ```
 
-<img src="myGoodReads_Analysis_files/figure-gfm/unnamed-chunk-27-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-27-1.png" style="display: block; margin: auto;" />
 
 ## Prediction
 
@@ -724,7 +725,7 @@ best_lambda <- model_en$lambda.min
 plot(model_en)
 ```
 
-<img src="myGoodReads_Analysis_files/figure-gfm/unnamed-chunk-29-1.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-29-1.png" style="display: block; margin: auto;" />
 
 ``` r
 en_coef <- coef(model_en, s = best_lambda)
@@ -756,7 +757,7 @@ model_rf <- randomForest(My.Rating ~ ., data = xy_train,
 varImpPlot(model_rf, main = "Variable Importance (Random Forest)")
 ```
 
-<img src="myGoodReads_Analysis_files/figure-gfm/unnamed-chunk-29-2.png" style="display: block; margin: auto;" />
+<img src="README_files/figure-gfm/unnamed-chunk-29-2.png" style="display: block; margin: auto;" />
 
 ``` r
 # Evaluate on validation set

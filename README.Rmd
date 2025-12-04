@@ -560,7 +560,7 @@ ggraph(tags_graph, layout = "kk") +
   labs(title = "Tag Co-Occurrence Network") +
   theme(legend.position = "none",
         plot.title = element_text(hjust = 0.5, size = 20, face = "bold.italic"))
-``
+```
 
 ## Prediction
 
